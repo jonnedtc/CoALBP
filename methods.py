@@ -5,8 +5,10 @@ def LBP(image, points=8, radius=1):
     '''
     Uniform Local Binary Patterns algorithm
     Input image with shape (height, width, channels)
-    Output features with length 59 * number of channels
+    Output features with length * number of channels
     '''
+    # calculate pattern length
+    length = points**2 - abs(points - 3)
     # lbp for all channels of image
     histogram = np.empty(0, dtype=np.int)
     for i in range(image.shape[2]):
@@ -14,12 +16,9 @@ def LBP(image, points=8, radius=1):
         pattern = lbp(channel, points, radius, method='nri_uniform')
         pattern = pattern.astype(np.int).ravel()
         pattern = np.bincount(pattern)
-        if len(pattern) < 59:
+        if len(pattern) < length:
             pattern = np.concatenate((pattern, np.zeros(59 - len(pattern))))
         histogram = np.concatenate((histogram, pattern))
     # normalize the histogram and return it
     features = (histogram - np.mean(histogram)) / np.std(histogram)
     return features
-    
-
-    
